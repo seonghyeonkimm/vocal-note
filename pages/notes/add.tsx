@@ -41,7 +41,7 @@ export default function AddPage() {
             <Row>
               <Col span={24}>
                 <Input.TextArea
-                  rows={10}
+                  rows={20}
                   value={lyrics}
                   onChange={handleLyricsChange}
                   placeholder="노래의 가사를 입력해주세요"
