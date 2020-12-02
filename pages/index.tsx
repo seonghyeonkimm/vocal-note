@@ -29,8 +29,8 @@ export default function Home() {
             <Row gutter={[16, 16]}>
               <Col span={6} xs={24} md={12} lg={6}>
                 <NoteCard
-                  title="그때의 나 그때의 우리"
-                  description="2020.12.01"
+                  title="그때의 나, 그때의 우리"
+                  description="2020.12.02"
                   onClick={createCardClick(1)}
                 />
               </Col>
