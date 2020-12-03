@@ -135,7 +135,6 @@ const SAMPLE = `그때의 나 그때의 우리
 
 // TODO: 저장할 때 이렇게 바꿔서 저장하기
 const SAMPLE_RESULT = SAMPLE.split('').reduce((current, next, index) => {
-  console.log(next);
   if (next === '\n') {
     const lastChar = current[index - 1];
     if (lastChar.text === '\n') {
