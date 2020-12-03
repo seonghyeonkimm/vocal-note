@@ -15,7 +15,7 @@ const LyricChar = forwardRef<HTMLInputElement, Props>(({ text, ...props }, ref) 
         type="checkbox"
         className={styles.checkbox}
       />
-      <span>{text}</span>
+      <span className={styles.text}>{text}</span>
     </label>
   );
 });

@@ -1,13 +1,32 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Layout, Row, Col, Button, PageHeader } from 'antd'
+import { Layout, Row, Col, Button, PageHeader, Spin } from 'antd'
 import Link from 'next/link';
 import Head from 'next/head'
 import NoteCard from '../components/NoteCard';
 import { useRouter } from 'next/router';
+import useFirebase from '../hooks/useFirestore';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
+  const db = useFirebase();
   const router = useRouter();
+  const [notes, setNotes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const createCardClick = (id: number) => () => router.push(`/notes/${id}`);
+
+  useEffect(() => {
+    db.collection("notes")
+      .get()
+      .then((querySnapshot) => {
+        const data = [];
+        querySnapshot.forEach(doc => {
+          data.push({ id: doc.id, ...doc.data() });
+        })
+        setNotes(data);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <div>
@@ -26,18 +45,34 @@ export default function Home() {
               </Link>
             ]}
           >
+            {loading && (
+              <div className="loading-container">
+                <Spin />
+              </div>
+            )}
             <Row gutter={[16, 16]}>
-              <Col span={6} xs={24} md={12} lg={6}>
-                <NoteCard
-                  title="그때의 나, 그때의 우리"
-                  description="2020.12.02"
-                  onClick={createCardClick(1)}
-                />
-              </Col>
+              {notes.map(({ id, title, createdAt }) => {
+                return (
+                  <Col span={6} xs={24} md={12} lg={6} key={id}>
+                    <NoteCard
+                      key={id}
+                      title={title}
+                      description={createdAt}
+                      onClick={createCardClick(id)}
+                    />
+                  </Col>
+                )
+              })}
             </Row>
           </PageHeader>
         </Layout.Content>
       </Layout>
+      <style jsx>{`
+        .loading-container {
+          padding: 16px;
+          text-align: center;
+        }
+      `}</style>
     </div>
   );
 }

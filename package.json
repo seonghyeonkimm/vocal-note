@@ -10,6 +10,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.3.0",
     "antd": "^4.9.1",
+    "firebase": "^8.1.1",
     "next": "10.0.3",
     "react": "17.0.1",
     "react-dom": "17.0.1",

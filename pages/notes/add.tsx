@@ -1,14 +1,30 @@
 import Head from 'next/head'
-import { Layout, Row, Col, PageHeader, Input, Button, Tooltip } from 'antd'
+import { Layout, Row, Col, PageHeader, Input, Button, Tooltip, Typography } from 'antd'
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import useFirestore from '../../hooks/useFirestore';
+import formatLyrics from '../../utils/formatLyrics';
 
 export default function AddPage() {
+  const db = useFirestore();
   const router = useRouter();
+  const [title, setTitle] = useState('');
   const [lyrics, setLyrics] = useState('');
+  const [loading, setLoading] = useState(false);
   const handleBackClick = () => router.push('/');
-  const handleSaveClick = () => console.log('lyrics saved: ', lyrics)
   const handleLyricsChange = (e) => setLyrics(e.target.value);
+  const handleTitleChange = (e) => setTitle(e.target.value);
+  const handleSaveClick = async () => {
+    setLoading(true);
+    const json = {
+      title,
+      lyrics: formatLyrics(lyrics),
+      createdAt: new Date().toISOString(),
+    };
+    await db.collection("notes").add(json)
+    setLoading(false);
+    router.push('/');
+  }
 
   return (
     <div>
@@ -26,20 +42,26 @@ export default function AddPage() {
               <Tooltip
                 key={0}
                 placement="left"
-                title={lyrics.length === 0 ? '가사를 입력하셔야 저장이 가능합니다.' : ''}
+                title={lyrics.length === 0 ? '제목과 가사를 입력하셔야 저장이 가능합니다.' : ''}
               >
                 <Button
                   type="primary"
                   onClick={handleSaveClick}
-                  disabled={lyrics.length === 0}
+                  loading={loading}
+                  disabled={lyrics.length === 0 && title.length === 0}
                 >
                   저장
                 </Button>
               </Tooltip>
             ]}
           >
-            <Row>
+            <Row gutter={[16, 16]}>
               <Col span={24}>
+                <Typography.Title level={5}>제목</Typography.Title>
+                <Input placeholder="제목을 입력해주세요" value={title} onChange={handleTitleChange} size="large" />
+              </Col>
+              <Col span={24}>
+                <Typography.Title level={5}>가사</Typography.Title>
                 <Input.TextArea
                   rows={20}
                   size="large"
