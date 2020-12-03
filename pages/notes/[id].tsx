@@ -1,13 +1,21 @@
 import React from "react";
 import Head from "next/head";
-import { Layout, PageHeader } from 'antd';
+import { Button, Layout, PageHeader } from 'antd';
 import { useRouter } from "next/router";
+import { useForm } from "react-hook-form";
+import LyricChar from "../../components/LyricChar";
+import SpaceChar from "../../components/SpaceChar";
 
+// TODO: 저장 완료했을 때에 message 띄워주기
 export default function DetailPage() {
   const router = useRouter();
-  const handleBackClick = () => router.push('/');
   // const id = router.query.id;
+  const { register, handleSubmit } = useForm({ 
+    defaultValues: { lyrics: SAMPLE_RESULT }
+  });
 
+  const handleBackClick = () => router.push('/');
+  const onSubmit = (data) => console.log('data: ', data)
 
   return (
     <div>
@@ -15,19 +23,75 @@ export default function DetailPage() {
         <link rel="icon" href="/favicon.ico" />
         <title>그때의 나, 그때의 우리 | Vocal Note</title>
       </Head>
-      <Layout>
-        <Layout.Content>
-          <PageHeader
-            ghost={false}
-            onBack={handleBackClick}
-            title="그때의 나, 그때의 우리"
-          >
-            <div style={{ whiteSpace: 'pre-line' }}>
-              {SAMPLE}
+      <div className="container">
+        <Layout>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Layout.Content>
+              <PageHeader
+                ghost={false}
+                onBack={handleBackClick}
+                title="그때의 나, 그때의 우리"
+              >
+                {SAMPLE_RESULT.map((charObj, index) => {
+                  return (
+                    <span key={index.toString()}>
+                      <input name={`lyrics[${index}].type`} className="hidden" ref={register} />
+                      <input name={`lyrics[${index}].text`} className="hidden" ref={register} />
+                      {(() => {
+                        switch (charObj.type) {
+                          case 'text':
+                            return (
+                              <LyricChar
+                                ref={register}
+                                text={charObj.text}
+                                name={`lyrics[${index}].accent`}
+                              />
+                            );
+                          case 'space':
+                            return (
+                              <SpaceChar ref={register} name={`lyrics[${index}].pause`} />
+                            );
+                          case 'enter':
+                            return (
+                              <SpaceChar ref={register} name={`lyrics[${index}].pause`} enter />
+                            );
+                          case 'linebreak':
+                            return <br />;
+                          default:
+                            return null;
+                        }
+                      })()}
+                    </span>
+                  )
+                })}
+              </PageHeader>
+            </Layout.Content>
+            <div className="button-container">
+              <Button htmlType="submit" type="primary" block>저장</Button>
             </div>
-          </PageHeader>
-        </Layout.Content>
-      </Layout>
+          </form>
+        </Layout>
+      </div>
+      <style jsx>
+        {`
+          .hidden {
+            display: none;
+          }
+
+          .container {
+            padding-bottom: 40px;
+          }
+
+          .button-container {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            right: 0;
+
+            padding: 8px;
+          }
+        `}
+      </style>
     </div>
   )
 }
@@ -68,3 +132,25 @@ const SAMPLE = `그때의 나 그때의 우리
 이 세상 전부였던 그때가 그리울 뿐
 
 그때의 나 그때의 우리`;
+
+// TODO: 저장할 때 이렇게 바꿔서 저장하기
+const SAMPLE_RESULT = SAMPLE.split('').reduce((current, next, index) => {
+  console.log(next);
+  if (next === '\n') {
+    const lastChar = current[index - 1];
+    if (lastChar.text === '\n') {
+      current.push({ type: 'linebreak' });
+    } else {
+      current.push({ type: 'enter', text: next, pause: false });
+    }
+    return current;
+  }
+
+  if (next === ' ') {
+    current.push({ type: 'space', text: next, pause: false });
+  } else {
+    current.push({ type: 'text', text: next, accent: false });
+  }
+
+  return current;
+}, [])

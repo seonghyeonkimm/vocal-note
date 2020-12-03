@@ -1,0 +1,21 @@
+.checkbox {
+  display: none;
+}
+
+.checkbox:checked + .space > span {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-40%, -50%);
+
+  display: inline-block;
+  color: #52c41a;
+}
+
+.space {
+  position: relative;
+}
+
+.space > span {
+  display: none;
+}

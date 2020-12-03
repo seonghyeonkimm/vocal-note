@@ -1,0 +1,8 @@
+.checkbox {
+  display: none;
+}
+
+.checkbox:checked + span {
+  border-radius: 2px;
+  background-color: lightblue;
+}
