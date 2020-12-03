@@ -1,4 +1,4 @@
-import firebase from '../firebase';
+import firebase from '../utils/firebase';
 
 const useFirebase = () => {
   if (firebase.apps.length) {
