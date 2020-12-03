@@ -7,13 +7,14 @@ import LyricChar from "../../components/LyricChar";
 import SpaceChar from "../../components/SpaceChar";
 import useFirebase from "../../hooks/useFirestore";
 import PageLoading from "../../components/PageLoading";
+import { DeleteOutlined } from "@ant-design/icons";
 
 export default function DetailPage() {
   const db = useFirebase();
   const router = useRouter();
   const [data, setData] = useState<any>();
   const [loading, setLoading] = useState(true);
-  const [postLoading, setPostLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
   const { register, handleSubmit, setValue } = useForm({
     defaultValues: { lyrics: [] }
   });
@@ -22,12 +23,24 @@ export default function DetailPage() {
   const onSubmit = async (data) => {
     const id = router.query.id as string;
 
-    setPostLoading(true);
+    setActionLoading(true);
     await db.collection('notes')
       .doc(id)
       .set(data, { merge: true })
-    setPostLoading(false);
+    setActionLoading(false);
     message.success('저장되었습니다');
+  }
+
+  const onDelete = async () => {
+    const id = router.query.id as string;
+    setActionLoading(true);
+    await db.collection('notes')
+      .doc(id)
+      .delete();
+    setActionLoading(false);
+
+    message.success('해당 노트를 삭제했습니다');
+    router.push('/');
   }
 
   useEffect(() => {
@@ -60,6 +73,19 @@ export default function DetailPage() {
                 ghost={false}
                 onBack={handleBackClick}
                 title={data?.title}
+                {...!loading && {
+                  extra: [
+                    <Button
+                      danger
+                      key={0}
+                      icon={<DeleteOutlined />}
+                      onClick={onDelete}
+                      loading={actionLoading}
+                    >
+                      삭제
+                    </Button>
+                  ]
+                }}
               >
                 {(data?.lyrics || []).map((charObj, index) => {
                   return (
@@ -97,7 +123,7 @@ export default function DetailPage() {
             </Layout.Content>
             {!loading && (
               <div className="button-container">
-                <Button htmlType="submit" type="primary" block loading={postLoading}>저장</Button>
+                <Button htmlType="submit" type="primary" block loading={actionLoading}>저장</Button>
               </div>
             )}
           </form>
