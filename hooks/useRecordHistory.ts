@@ -18,15 +18,15 @@ const useRecordHistory = () => {
         const filenames = [];
         const promises = [];
         res.items.forEach((itemRef) => {
-          filenames.push(itemRef.name);
+          filenames.push({ filename: itemRef.name, fullPath: itemRef.fullPath });
           promises.push(itemRef.getDownloadURL())
         });
         Promise.all(promises).then(urls => {
-          setData(filenames.map((filename, index) => ({ filename, url: urls[index] })));
+          setData(filenames.map((filename, index) => ({ ...filename, url: urls[index] })));
           setLoading(false);
         });
       })
-  }, [])
+  }, [router.query.id])
 
   return { data, loading };
 }

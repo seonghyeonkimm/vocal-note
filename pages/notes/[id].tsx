@@ -57,6 +57,11 @@ export default function DetailPage() {
     await ref.put(blobObj)
   }
 
+  const onAudioDelete = async (fullpath: string) => {
+    const ref = storage.child(fullpath);
+    await ref.delete();
+    message.success('해당 녹음 기록을 삭제했습니다');
+  }
 
   useEffect(() => {
     const id = router.query.id as string;
@@ -137,7 +142,7 @@ export default function DetailPage() {
                   <Divider />
                   <RecordButton onSave={onAudioSave} />
                   <Divider />
-                  <RecordHistory {...recordHistoryData} />
+                  <RecordHistory {...recordHistoryData} onItemDelete={onAudioDelete} />
                 </div>
               </PageHeader>
             </Layout.Content>
