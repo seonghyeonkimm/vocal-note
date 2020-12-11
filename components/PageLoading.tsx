@@ -8,7 +8,7 @@ const PageLoading: React.FC<Props> = ({ open = false }) => {
 
   return (
     <>
-      <div> <Spin size="large" /></div>
+      <div><Spin size="large" /></div>
       <style jsx>{`
         div {
           position: fixed;

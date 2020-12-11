@@ -58,7 +58,7 @@ const RecordButton: FC<Props> = ({ showPreview = true, onSave, ...props }) => {
         )}
         {showPreview && mediaBlobUrl && (
           <div className="preview-container">
-            <Typography.Title level={5}>Recording Preview</Typography.Title>
+            <Typography.Title level={4}>Recording Preview</Typography.Title>
             <audio src={mediaBlobUrl} controls />
           </div>
         )}

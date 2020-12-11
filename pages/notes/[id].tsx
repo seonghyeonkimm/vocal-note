@@ -10,6 +10,8 @@ import PageLoading from "../../components/PageLoading";
 import { DeleteOutlined } from "@ant-design/icons";
 import RecordButton from "../../components/RecordButton";
 import useFirebaseStorage from "../../hooks/useFirebaseStorage";
+import RecordHistory from "../../components/RecordHistory";
+import useRecordHistory from "../../hooks/useRecordHistory";
 
 export default function DetailPage() {
   const db = useFirebase();
@@ -21,6 +23,7 @@ export default function DetailPage() {
   const { register, handleSubmit, setValue } = useForm({
     defaultValues: { lyrics: [] }
   });
+  const recordHistoryData = useRecordHistory();
 
   const handleBackClick = () => router.push('/');
   const onSubmit = async (data) => {
@@ -134,9 +137,7 @@ export default function DetailPage() {
                   <Divider />
                   <RecordButton onSave={onAudioSave} />
                   <Divider />
-                  <div>
-                    <Typography.Title level={5}>Recording History</Typography.Title>
-                  </div>
+                  <RecordHistory {...recordHistoryData} />
                 </div>
               </PageHeader>
             </Layout.Content>
