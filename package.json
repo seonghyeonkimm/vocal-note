@@ -14,7 +14,8 @@
     "next": "10.0.3",
     "react": "17.0.1",
     "react-dom": "17.0.1",
-    "react-hook-form": "^6.12.2"
+    "react-hook-form": "^6.12.2",
+    "react-media-recorder": "^1.4.0"
   },
   "devDependencies": {
     "@types/node": "^14.14.10",

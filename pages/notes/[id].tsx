@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import { Button, Layout, message, PageHeader } from 'antd';
+import { Button, Divider, Layout, message, PageHeader, Typography } from 'antd';
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import LyricChar from "../../components/LyricChar";
@@ -8,9 +8,12 @@ import SpaceChar from "../../components/SpaceChar";
 import useFirebase from "../../hooks/useFirestore";
 import PageLoading from "../../components/PageLoading";
 import { DeleteOutlined } from "@ant-design/icons";
+import RecordButton from "../../components/RecordButton";
+import useFirebaseStorage from "../../hooks/useFirebaseStorage";
 
 export default function DetailPage() {
   const db = useFirebase();
+  const storage = useFirebaseStorage();
   const router = useRouter();
   const [data, setData] = useState<any>();
   const [loading, setLoading] = useState(true);
@@ -43,6 +46,15 @@ export default function DetailPage() {
     router.push('/');
   }
 
+  const onAudioSave = async (blob: string) => {
+    const blobObj = await fetch(blob).then(r => r.blob());
+    const id = router.query.id as string;
+    const filename = `${id}/${new Date().toISOString()}.wav`;
+    const ref = storage.child(filename);
+    await ref.put(blobObj)
+  }
+
+
   useEffect(() => {
     const id = router.query.id as string;
     if (!id) return;
@@ -71,21 +83,20 @@ export default function DetailPage() {
             <Layout.Content>
               <PageHeader
                 ghost={false}
-                onBack={handleBackClick}
                 title={data?.title}
-                {...!loading && {
-                  extra: [
+                onBack={!loading ? handleBackClick : null}
+                extra={[
+                  <div key={0} className="loading-hidden">
                     <Button
                       danger
-                      key={0}
-                      icon={<DeleteOutlined />}
                       onClick={onDelete}
                       loading={actionLoading}
+                      icon={<DeleteOutlined />}
                     >
                       삭제
                     </Button>
-                  ]
-                }}
+                  </div>
+                ]}
               >
                 {(data?.lyrics || []).map((charObj, index) => {
                   return (
@@ -119,13 +130,19 @@ export default function DetailPage() {
                     </span>
                   )
                 })}
+                <div className="loading-hidden">
+                  <Divider />
+                  <RecordButton onSave={onAudioSave} />
+                  <Divider />
+                  <div>
+                    <Typography.Title level={5}>Recording History</Typography.Title>
+                  </div>
+                </div>
               </PageHeader>
             </Layout.Content>
-            {!loading && (
-              <div className="button-container">
-                <Button htmlType="submit" type="primary" block loading={actionLoading}>저장</Button>
-              </div>
-            )}
+            <div className="button-container loading-hidden">
+              <Button htmlType="submit" type="primary" block loading={actionLoading}>저장</Button>
+            </div>
           </form>
         </Layout>
       </div>
@@ -133,6 +150,10 @@ export default function DetailPage() {
         {`
           .hidden {
             display: none;
+          }
+
+          .loading-hidden {
+            display: ${loading ? 'none' : 'inherit'};
           }
 
           .container {
