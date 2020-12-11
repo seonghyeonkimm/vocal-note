@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import { Button, Divider, Layout, message, PageHeader, Typography } from 'antd';
+import { Button, Divider, Layout, message, Modal, PageHeader, Typography } from 'antd';
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import LyricChar from "../../components/LyricChar";
@@ -39,14 +39,24 @@ export default function DetailPage() {
 
   const onDelete = async () => {
     const id = router.query.id as string;
-    setActionLoading(true);
-    await db.collection('notes')
-      .doc(id)
-      .delete();
-    setActionLoading(false);
 
-    message.success('해당 노트를 삭제했습니다');
-    router.push('/');
+    Modal.confirm({
+      title: '보컬 노트 삭제',
+      content: '보컬 노트를 정말로 삭제하시겠습니까?',
+      okText: '확인',
+      cancelText: '취소',
+      onOk: async (destroy) => {
+        setActionLoading(true);
+        await db.collection('notes')
+          .doc(id)
+          .delete();
+        setActionLoading(false);
+        destroy();
+
+        message.success('해당 노트를 삭제했습니다');
+        router.push('/');
+      },
+    });
   }
 
   const onAudioSave = async (blob: string) => {

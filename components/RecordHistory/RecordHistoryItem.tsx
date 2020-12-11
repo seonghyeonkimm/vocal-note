@@ -1,5 +1,5 @@
 import { DeleteOutlined } from '@ant-design/icons';
-import { Button, Typography } from 'antd';
+import { Button, Modal, Typography } from 'antd';
 import { FC, useState } from 'react';
 
 type Props = {
@@ -13,8 +13,19 @@ const RecordHistoryItem: FC<Props> = ({ url, fullPath, filename, onDelete }) => 
   const [loading, setLoading] = useState(false);
   const onDeleteClick = async () => {
     if (!onDelete) return;
-    setLoading(true);
-    await onDelete(fullPath);
+
+    Modal.confirm({
+      title: '녹음 기록 삭제',
+      content: '녹음 기록을 정말로 삭제하시겠습니까?',
+      okText: '확인',
+      cancelText: '취소',
+      onOk: async (destroy) => {
+        setLoading(true);
+        await onDelete(fullPath);
+
+        destroy();
+      }
+    });
   }
 
   return (
