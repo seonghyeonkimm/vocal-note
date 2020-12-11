@@ -1,6 +1,6 @@
 import { DeleteOutlined } from '@ant-design/icons';
 import { Button, Typography } from 'antd';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 
 type Props = {
   url: string;
@@ -10,8 +10,11 @@ type Props = {
 };
 
 const RecordHistoryItem: FC<Props> = ({ url, fullPath, filename, onDelete }) => {
-  const onDeleteClick = () => {
-    onDelete && onDelete(fullPath);
+  const [loading, setLoading] = useState(false);
+  const onDeleteClick = async () => {
+    if (!onDelete) return;
+    setLoading(true);
+    await onDelete(fullPath);
   }
 
   return (
@@ -19,7 +22,7 @@ const RecordHistoryItem: FC<Props> = ({ url, fullPath, filename, onDelete }) => 
       <div className="title-container">
         <Typography.Title level={5} style={{ marginBottom: 0 }}>{filename}</Typography.Title>
         {onDelete && (
-          <Button danger icon={<DeleteOutlined />} type="link" onClick={onDeleteClick} />
+          <Button danger icon={<DeleteOutlined />} type="link" onClick={onDeleteClick} loading={loading} />
         )}
       </div>
       <audio controls src={url} />

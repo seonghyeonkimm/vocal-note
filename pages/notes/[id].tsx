@@ -55,11 +55,14 @@ export default function DetailPage() {
     const filename = `${id}/${new Date().toISOString()}.wav`;
     const ref = storage.child(filename);
     await ref.put(blobObj)
+    await recordHistoryData.reload();
+    message.success('녹음 기록을 저장했습니다');
   }
 
   const onAudioDelete = async (fullpath: string) => {
     const ref = storage.child(fullpath);
     await ref.delete();
+    await recordHistoryData.reload();
     message.success('해당 녹음 기록을 삭제했습니다');
   }
 

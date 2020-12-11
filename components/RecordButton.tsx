@@ -10,6 +10,7 @@ type Props = ReactMediaRecorderHookProps & {
 
 const RecordButton: FC<Props> = ({ showPreview = true, onSave, ...props }) => {
   const intervalRef = useRef<any>();
+  const [saveLoading, setSaveLoading] = useState(false);
   const [recordedSeconds, setRecordedSeconds] = useState(0);
   const {
     status,
@@ -25,9 +26,11 @@ const RecordButton: FC<Props> = ({ showPreview = true, onSave, ...props }) => {
     intervalRef.current = setInterval(() => setRecordedSeconds(prev => prev + 1), 1000);
   }
 
-  const onSaveClick = () => {
-    console.log('typeof bloburl: ', typeof mediaBlobUrl);
-    onSave(mediaBlobUrl);
+  const onSaveClick = async () => {
+    setSaveLoading(true);
+    await onSave(mediaBlobUrl);
+    clearBlobUrl();
+    setSaveLoading(false);
   }
 
   const onStopClick = () => {
@@ -44,7 +47,7 @@ const RecordButton: FC<Props> = ({ showPreview = true, onSave, ...props }) => {
             <Button onClick={onStartClick} icon={<AudioOutlined />} style={{ flex: '1 1 auto' }}>
               녹음하기
             </Button>
-            {mediaBlobUrl && onSave && <Button icon={<SaveOutlined />} onClick={onSaveClick}>녹음 저장</Button>}
+            {mediaBlobUrl && onSave && <Button icon={<SaveOutlined />} onClick={onSaveClick} loading={saveLoading}>녹음 저장</Button>}
             {mediaBlobUrl && <Button icon={<DeleteOutlined />} onClick={clearBlobUrl}>녹음 삭제</Button>}
           </Button.Group>
         ) : (
