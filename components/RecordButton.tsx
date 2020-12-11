@@ -5,7 +5,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { ReactMediaRecorderHookProps, useReactMediaRecorder } from 'react-media-recorder';
 
 type Props = ReactMediaRecorderHookProps & {
-  showPreview?: boolean; onSave?: (blob: string) => void;
+  showPreview?: boolean; onSave?: (blob: string) => Promise<void>;
 };
 
 const RecordButton: FC<Props> = ({ showPreview = true, onSave, ...props }) => {
@@ -81,7 +81,7 @@ const RecordButton: FC<Props> = ({ showPreview = true, onSave, ...props }) => {
   )
 };
 
-const RecordButtonContainer = () => {
+const RecordButtonContainer: FC<Props> = (props) => {
   return (
     <ErrorBoundary FallbackComponent={() => (
       <Typography.Paragraph style={{ marginBottom: 0 }}>
@@ -90,7 +90,7 @@ const RecordButtonContainer = () => {
         크롬을 사용해주세요
       </Typography.Paragraph>
     )}>
-      <RecordButton />
+      <RecordButton {...props} />
     </ErrorBoundary>
   )
 }
