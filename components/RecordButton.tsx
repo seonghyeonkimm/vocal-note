@@ -1,11 +1,11 @@
 import { AudioOutlined, DeleteOutlined, PauseOutlined, SaveOutlined } from '@ant-design/icons';
 import { Button, Typography } from 'antd';
 import React, { FC, useRef, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { ReactMediaRecorderHookProps, useReactMediaRecorder } from 'react-media-recorder';
 
 type Props = ReactMediaRecorderHookProps & {
-  showPreview?: boolean;
-  onSave?: (blob: string) => void;
+  showPreview?: boolean; onSave?: (blob: string) => void;
 };
 
 const RecordButton: FC<Props> = ({ showPreview = true, onSave, ...props }) => {
@@ -81,4 +81,18 @@ const RecordButton: FC<Props> = ({ showPreview = true, onSave, ...props }) => {
   )
 };
 
-export default RecordButton;
+const RecordButtonContainer = () => {
+  return (
+    <ErrorBoundary FallbackComponent={() => (
+      <Typography.Paragraph style={{ marginBottom: 0 }}>
+        이 브라우저는 녹음 기능을 제공하지 않습니다.
+        <br />
+        크롬을 사용해주세요
+      </Typography.Paragraph>
+    )}>
+      <RecordButton />
+    </ErrorBoundary>
+  )
+}
+
+export default RecordButtonContainer;

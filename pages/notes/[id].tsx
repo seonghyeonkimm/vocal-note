@@ -12,8 +12,6 @@ import RecordButton from "../../components/RecordButton";
 import useFirebaseStorage from "../../hooks/useFirebaseStorage";
 import RecordHistory from "../../components/RecordHistory";
 import useRecordHistory from "../../hooks/useRecordHistory";
-import { ErrorBoundary } from "react-error-boundary";
-import ErrorFallback from "../../components/ErrorFallback";
 
 export default function DetailPage() {
   const db = useFirebase();
@@ -145,11 +143,7 @@ export default function DetailPage() {
                 })}
                 <div className="loading-hidden">
                   <Divider />
-                  <ErrorBoundary
-                    FallbackComponent={() => <Typography.Paragraph>이 브라우저는 녹음 기능을 제공하지 않습니다. 크롬을 사용해주세요</Typography.Paragraph>}
-                  >
-                    <RecordButton onSave={onAudioSave} />
-                  </ErrorBoundary>
+                  <RecordButton onSave={onAudioSave} />
                   <Divider />
                   <RecordHistory {...recordHistoryData} onItemDelete={onAudioDelete} />
                 </div>
