@@ -5,7 +5,8 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { ReactMediaRecorderHookProps, useReactMediaRecorder } from 'react-media-recorder';
 
 type Props = ReactMediaRecorderHookProps & {
-  showPreview?: boolean; onSave?: (blob: string) => Promise<void>;
+  showPreview?: boolean;
+  onSave?: (blob: string) => Promise<void>;
 };
 
 const RecordButton: FC<Props> = ({ showPreview = true, onSave, ...props }) => {
@@ -48,7 +49,6 @@ const RecordButton: FC<Props> = ({ showPreview = true, onSave, ...props }) => {
               녹음하기
             </Button>
             {mediaBlobUrl && onSave && <Button icon={<SaveOutlined />} onClick={onSaveClick} loading={saveLoading}>녹음 저장</Button>}
-            {mediaBlobUrl && <Button icon={<DeleteOutlined />} onClick={clearBlobUrl}>녹음 삭제</Button>}
           </Button.Group>
         ) : (
         <Button

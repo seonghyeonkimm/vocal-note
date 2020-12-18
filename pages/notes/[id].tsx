@@ -62,7 +62,7 @@ export default function DetailPage() {
   const onAudioSave = async (blob: string) => {
     const blobObj = await fetch(blob).then(r => r.blob());
     const id = router.query.id as string;
-    const filename = `${id}/${new Date().toISOString()}.wav`;
+    const filename = `${id}/${new Date().toISOString()}.mp3`;
     const ref = storage.child(filename);
     await ref.put(blobObj)
     await recordHistoryData.reload();
@@ -116,17 +116,25 @@ export default function DetailPage() {
                     >
                       삭제
                     </Button>
-                  </div>
+                  </div>,
                 ]}
               >
                 {(data?.lyrics || []).map((charObj, index) => {
                   return (
                     <span key={index.toString()}>
-                      <input name={`lyrics[${index}].type`} className="hidden" ref={register} />
-                      <input name={`lyrics[${index}].text`} className="hidden" ref={register} />
+                      <input
+                        name={`lyrics[${index}].type`}
+                        className="hidden"
+                        ref={register}
+                      />
+                      <input
+                        name={`lyrics[${index}].text`}
+                        className="hidden"
+                        ref={register}
+                      />
                       {(() => {
                         switch (charObj.type) {
-                          case 'text':
+                          case "text":
                             return (
                               <LyricChar
                                 ref={register}
@@ -134,33 +142,53 @@ export default function DetailPage() {
                                 name={`lyrics[${index}].accent`}
                               />
                             );
-                          case 'space':
+                          case "space":
                             return (
-                              <SpaceChar ref={register} name={`lyrics[${index}].pause`} />
+                              <SpaceChar
+                                ref={register}
+                                name={`lyrics[${index}].pause`}
+                              />
                             );
-                          case 'enter':
+                          case "enter":
                             return (
-                              <SpaceChar ref={register} name={`lyrics[${index}].pause`} enter />
+                              <SpaceChar
+                                ref={register}
+                                name={`lyrics[${index}].pause`}
+                                enter
+                              />
                             );
-                          case 'linebreak':
+                          case "linebreak":
                             return <br />;
                           default:
                             return null;
                         }
                       })()}
                     </span>
-                  )
+                  );
                 })}
                 <div className="loading-hidden">
                   <Divider />
-                  <RecordButton onSave={onAudioSave} />
+                  <RecordButton
+                    onSave={onAudioSave}
+                    blobPropertyBag={{ type: 'audio/mp3' }}
+                  />
                   <Divider />
-                  <RecordHistory {...recordHistoryData} onItemDelete={onAudioDelete} />
+                  <RecordHistory
+                    {...recordHistoryData}
+                    onItemDelete={onAudioDelete}
+                  />
                 </div>
               </PageHeader>
             </Layout.Content>
             <div className="button-container loading-hidden">
-              <Button htmlType="submit" type="primary" block loading={actionLoading}>저장</Button>
+              <Button
+                htmlType="submit"
+                type="primary"
+                block
+                loading={actionLoading}
+              >
+                저장
+              </Button>
             </div>
           </form>
         </Layout>
@@ -172,7 +200,7 @@ export default function DetailPage() {
           }
 
           .loading-hidden {
-            display: ${loading ? 'none' : 'inherit'};
+            display: ${loading ? "none" : "inherit"};
           }
 
           .container {
@@ -190,5 +218,5 @@ export default function DetailPage() {
         `}
       </style>
     </div>
-  )
+  );
 }
